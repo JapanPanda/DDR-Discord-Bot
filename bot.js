@@ -36,7 +36,7 @@ client.on('message', message => {
         combinedArg += args[i];
         combinedArg += ' ';
       }
-      
+
       var songName = encodeURI(combinedArg);
       var searchUri = 'https://remywiki.com/index.php?search=' + songName + '&title=Special%3ASearch&go=Go';
       songscraper.search(searchUri).then(function(songJson) {
