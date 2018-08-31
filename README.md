@@ -11,5 +11,7 @@ Have any suggestions? Create an issue on Github.
 
 ## Commands
 !help - Show available commands
+
 !who - Brief introduction about who I am
+
 !songinfo {song name} - Lists Song information and difficulty breakdown (romaji accepted)
