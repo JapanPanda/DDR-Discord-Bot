@@ -4,7 +4,16 @@
   "description": "Discord bot for Dance Dance Revolution purposes",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot.js"
+  },
+  "engines": {
+    "node": "10.9.0",
+    "npm": "6.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JapanPanda/DDR-Discord-Bot.git"
   },
   "author": "Vincent Boc",
   "license": "ISC",
