@@ -15,15 +15,24 @@ function getSongInfo($, songJson) {
       return false;
     }
   });
-
-  var artist = songInfo.slice(8, songInfo.indexOf('Composition/Arrangement: ') - 1);
-  songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
-  var charter = songInfo.slice(26, songInfo.indexOf('BPM: ') - 1);
+  if(songInfo.includes('Composition/Arrangement: ')) {
+    var artist = songInfo.slice(8, songInfo.indexOf('Composition/Arrangement: ') - 1);
+    songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
+    var charter = songInfo.slice(26, songInfo.indexOf('BPM: ') - 1);
+  }
+  else {
+    var artist = songInfo.slice(8, songInfo.indexOf('Composition: ') - 1);
+    songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
+    var charter = songInfo.slice(14, songInfo.indexOf('BPM: ') - 1);
+    var separateArranger = true;
+  }
   songInfo = songInfo.slice(songInfo.indexOf(charter) + charter.length);
   var bpm = songInfo.slice(6, songInfo.indexOf('Length: ') - 1);
   songInfo = songInfo.slice(songInfo.indexOf(bpm) + bpm.length);
   var length = songInfo.slice(9, 13);
-
+  if(separateArranger) {
+    charter = charter.replace('Arrangement: ', '**Arrangement:** ')
+  }
   songJson['songname'] = songName;
   songJson['artist'] = artist;
   songJson['charter'] = charter;
@@ -124,8 +133,8 @@ function search(name) {
     });
 }
 
-/* Standalone test
-var songName = "Prey";
+/*
+var songName = "PARANOiA Revolution";
 var searchUri = 'https://remywiki.com/index.php?search=' + songName + '&title=Special%3ASearch&go=Go';
 search(searchUri);
 */
