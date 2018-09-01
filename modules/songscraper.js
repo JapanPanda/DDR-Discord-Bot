@@ -1,16 +1,16 @@
-var rp = require('request-promise');
-var cheerio = require('cheerio');
+
+var rp = require('request-promise')
+var cheerio = require('cheerio')
 
 module.exports = {
-  search: function(link) { return search(link); },
+  search: function(name) { return search(name) },
   getDifficulty: function($) { var difficulty = getRawDifficulty($);
-                               return parseDifficulty($, difficulty); },
-  isCutCSExclusive: function($) { return isCutCSExclusive($); },
-  difficultySearch: function(link, playstyle, level) { return difficultySearch(link, playstyle, level); }
+                             return parseDifficulty($, difficulty); },
+  isCutCSExclusive: function($) { return isCutCSExclusive($); }
 };
 
 function getSongInfo($, songJson) {
-  var songname = $('.mw-headline').eq(0).text();
+  var songName = $('.mw-headline').eq(0).text();
   var songInfo;
   $('.mw-parser-output').find('p').each(function(i, elem) {
     if ($(this).text().includes('Artist: ')) {
@@ -22,11 +22,6 @@ function getSongInfo($, songJson) {
     var artist = songInfo.slice(8, songInfo.indexOf('Composition/Arrangement: ') - 1);
     songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
     var charter = songInfo.slice(26, songInfo.indexOf('BPM: ') - 1);
-  }
-  else if(songInfo.includes('Composition/Lyrics: ')) {
-    var artist = songInfo.slice(8, songInfo.indexOf('Composition/Lyrics: ') - 1);
-    songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
-    var charter = songInfo.slice(23, songInfo.indexOf('BPM: ') - 1);
   }
   else {
     var artist = songInfo.slice(8, songInfo.indexOf('Composition: ') - 1);
@@ -41,7 +36,7 @@ function getSongInfo($, songJson) {
   if(separateArranger) {
     charter = charter.replace('Arrangement: ', '**Arrangement:** ')
   }
-  songJson['songname'] = songname;
+  songJson['songname'] = songName;
   songJson['artist'] = artist;
   songJson['charter'] = charter;
   songJson['bpm'] = bpm;
@@ -50,9 +45,6 @@ function getSongInfo($, songJson) {
 
 function parseDifficulty($, difficulty) {
   var difficultiesArray = [];
-  if(difficulty.length == 0) {
-    return [];
-  }
   difficulty.each(function(i, elem) {
     if (i != 0) {
       var rawText = $(this).text();
@@ -88,8 +80,8 @@ function parseNoteCount($, noteCount) {
 function getRawDifficulty($, index = 0) {
   var difficulty;
   $('tbody').each(function(i, elem) {
-    var gamelink = $(this).find('tr').last().find('td').eq(0).text();
-    if (gamelink.includes('DanceDance') || gamelink.includes('DDR')) {
+    var gameName = $(this).find('tr').last().find('td').eq(0).text();
+    if (gameName.includes('DanceDance') || gameName.includes('DDR')) {
       difficulty = $(this).find('tr').last().find('td');
       index = i;
       return false;
@@ -97,7 +89,6 @@ function getRawDifficulty($, index = 0) {
       difficulty = [];
     }
   });
-  console.log(index);
   return difficulty;
 }
 
@@ -114,10 +105,20 @@ function getRawNoteCount($, index) {
 }
 
 function getChartInfo($, songJson) {
-  index = 0;
-  var difficulty = getRawDifficulty($, index);
-  console.log(index);
+  var difficulty;
+  var index;
+
+  $('tbody').each(function(i, elem) {
+    var gameName = $(this).find('tr').last().find('td').eq(0).text();
+    if (gameName.includes('DanceDanceRevolution')) {
+      difficulty = $(this).find('tr').last().find('td');
+      index = i;
+      return false;
+    }
+  });
+
   var noteCount = getRawNoteCount($, index);
+
   difficultiesArray = parseDifficulty($, difficulty);
   noteCountArray = parseNoteCount($, noteCount);
 
@@ -125,12 +126,12 @@ function getChartInfo($, songJson) {
   songJson['notecount'] = noteCountArray;
 }
 
-function search(link) {
+function search(name) {
 
   var songJson = {};
 
   var options = {
-    uri: link,
+    uri: name,
     followAllRedirects: true,
     transform: function(body) {
       return cheerio.load(body);
@@ -141,7 +142,7 @@ function search(link) {
     .then(($) => {
 
       if ($('#firstHeading').text() == 'Search results') {
-        console.log('User tried to search ' + link + ' which yielded no results');
+        console.log('User tried to search ' + name + ' which yielded no results');
         return 0;
       }
 
@@ -149,71 +150,6 @@ function search(link) {
       getChartInfo($, songJson);
 
       return songJson;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
-function getDifficultyName(level) {
-  switch (level) {
-    case 0:
-      return 'Beginner';
-    case 1:
-      return 'Basic';
-    case 2:
-      return 'Difficult';
-    case 3:
-      return'Expert';
-    case 4:
-      return 'Challenge';
-    case 5:
-      return 'Basic';
-    case 6:
-      return 'Difficult';
-    case 7:
-      return 'Expert';
-    case 8:
-      return 'Challenge';
-  }
-}
-
-async function difficultySearch(link, playstyle, level) {
-  var songJson = {};
-  var finalJson = {};
-  var options = {
-    uri: link,
-    followAllRedirects: true,
-    transform: function(body) {
-      return cheerio.load(body);
-    }
-  }
-
-  return rp(options)
-    .then(($) => {
-      var tracker;
-      getSongInfo($, songJson);
-      getChartInfo($, songJson);
-      if (playstyle == 'singles') {
-        for (var i = 0; i < 5; i++) {
-          if ((songJson['difficulty'])[i] == level) {
-            tracker = i;
-          }
-        }
-      }
-      else {
-        for (var i = 5; i < 9; i++) {
-          if ((songJson['difficulty'])[i] == level) {
-            tracker = i;
-          }
-        }
-      }
-      finalJson['difficulty'] = getDifficultyName(tracker);
-      finalJson['level'] = level;
-      finalJson['name'] = songJson['songname'];
-      finalJson['bpm'] = songJson['bpm'];
-      console.log(songJson);
-      return finalJson;
     })
     .catch((error) => {
       console.log(error);
@@ -233,9 +169,8 @@ function isCutCSExclusive($) {
   return !isValid;
 }
 
-
 /*
-var songlink = "PARANOiA Revolution";
-var searchUri = 'https://remywiki.com/index.php?search=' + songlink + '&title=Special%3ASearch&go=Go';
+var songName = "PARANOiA Revolution";
+var searchUri = 'https://remywiki.com/index.php?search=' + songName + '&title=Special%3ASearch&go=Go';
 search(searchUri);
 */

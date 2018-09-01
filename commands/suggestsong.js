@@ -29,7 +29,7 @@ module.exports = {
 
 
 async function generateSong(playstyle, level) {
-    var difficultyJson = JSON.parse(fs.readFileSync('../difficultylist.json', 'utf8'));
+    var difficultyJson = JSON.parse(fs.readFileSync('./difficultylist.json', 'utf8'));
     var indexChosen = Math.floor(Math.random() * (difficultyJson[playstyle])[level].length);
     indexChosen = 34;
     var songLink = ((difficultyJson[playstyle])[level])[indexChosen];
