@@ -41,7 +41,7 @@ async function scrape() {
     await scrapeAllPages(links, difficultyJson);
   }
   //console.log(JSON.stringify(difficultyJson, null, 2));
-  fs.writeFile('./difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
+  fs.writeFile('../difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
     console.log('Finished writing');
   });
 }
