@@ -20,31 +20,50 @@ var options2 = {
 
 
 async function scrape() {
+  var difficultyJson = initializeJson();
   var startURL = 'https://remywiki.com/Category:DDR_Songs';
+  var finished = false;
   options.uri = startURL;
-  var difficultyJson = await scrapeDifficulties();
-  console.log('I\'m supposed to appear after the Finished writing log!');
-  // I want it to write the json from here, but its not waiting and difficultyjson will be undefined
-  // fs.writeFile('difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
-  //   console.log('Finished writing');
-  // });
+  while(!finished) {
+    links = [];
+    links = await scrapeLinks();
+    console.log(links[links.length - 1]);
+    if (!links[links.length - 1].includes('index.php')) {
+      console.log('Last run!');
+      finished = true;
+    }
+    else if(links[links.length - 1] == null) {
+      finished = true;
+    }
+    else {
+        options.uri = links[links.length - 1];
+    }
+    await scrapeAllPages(links, difficultyJson);
+  }
+  //console.log(JSON.stringify(difficultyJson, null, 2));
+  fs.writeFile('../difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
+    console.log('Finished writing');
+  });
 }
 
-async function scrapeDifficulties() {
+function initializeJson() {
+  var difficultyJson = {};
+  difficultyJson = {'Singles': {}, 'Doubles': {}};
+  for (var i = 1; i < 20; i++) {
+    difficultyJson['Singles'][i] = [];
+    difficultyJson['Doubles'][i] = [];
+  }
+  return difficultyJson;
+}
+
+async function scrapeLinks() {
   var difficultyJson = {};
   return rp(options)
-    .then(async ($) => {
+    .then(($) => {
       links = getNextPage($);
       var nextPageLink = links[0];
-      console.log("Scraping remywiki's list of DDR Songs. This might take a while...")
+      console.log("Scraping Remywiki's list of DDR Songs. This might take a while...")
       return links;
-    }).then(async (links) => {
-      scrapeAllPages(links).then((difficultyJson) => {
-        jsonString = JSON.stringify(difficultyJson, null, 2);
-        return difficultyJson;
-      });
-    }).catch((error) => {
-      console.log(error);
     })
     .catch((err) => {
       console.log(err);
@@ -54,20 +73,15 @@ async function scrapeDifficulties() {
 function scrapeIndividualPage(link) {
   options2.uri = link;
   return rp(options2)
-    .then(($$) => {
-      //console.log("entering 3rd part");
-      if (songscraper.isCutCSExclusive($$)) {
-        //console.log(link + " is not in arcade editions");
+    .then(($) => {
+      if (songscraper.isCutCSExclusive($)) {
         return 0;
       }
-      var currDifficulty = songscraper.getDifficulty($$);
+      var currDifficulty = songscraper.getDifficulty($);
       if (currDifficulty.length == 0) {
-        //console.log("Excluded " + link + " since no difficulties were found");
         return 0;
       }
-      //console.log(JSON.stringify(difficultyJson, null, 2));
       currDifficulty.push(link);
-      //console.log(currDifficulty);
       return currDifficulty;
     })
     .catch((err) => {
@@ -78,66 +92,72 @@ function scrapeIndividualPage(link) {
 
 function removeInvalidEntries(difficulty) {
   var filteredDifficulty = [];
-  for (var i = 0; i < difficulty.length; i++) {
-    if (difficulty[i] != 0) {
-      filteredDifficulty.push(difficulty[i]);
+  difficulty.forEach((entry) => {
+    if (entry != 0) {
+      filteredDifficulty.push(entry);
     }
-  }
+  });
   return filteredDifficulty;
 }
 
-async function scrapeAllPages(links) {
-  const promise = new Promise((resolve, reject) => {
-    var promises = [];
-    var difficultyJson = {};
-    difficultyJson = {'Singles': {}, 'Doubles': {}};
-    for (var i = 1; i < 20; i++) {
-      difficultyJson['Singles'][i] = [];
-      difficultyJson['Doubles'][i] = [];
+async function scrapeAllPages(links, difficultyJson) {
+  var promises = [];
+  links.forEach((link) => {
+    if (link.includes('index.php') || link.includes('undefined') || link == null) {
+      return;
     }
-    for (let i = 1; i < links.length; i++) {
-      if (links[i].includes('index.php')) {
-        continue;
-      }
-      promises.push(scrapeIndividualPage(links[i]));
-    }
-    Promise.all(promises)
-      .then((difficulty) => {
-        var filteredDifficulty = removeInvalidEntries(difficulty);
-        for(var i = 0; i < filteredDifficulty.length; i++) {
-          for(var j = 0; j < 5; j++) {
-            if((filteredDifficulty[i])[j] == 'N/A') {
-              continue;
-            }
-            difficultyJson['Singles'][(filteredDifficulty[i])[j]].push(filteredDifficulty[i][9]);
-          }
-          for(var j = 5; j < 9; j++) {
-            if((filteredDifficulty[i])[j] == 'N/A') {
-              continue;
-            }
-            difficultyJson['Doubles'][(filteredDifficulty[i])[j]].push(filteredDifficulty[i][9]);
-          }
-        }
-
-        // It works if I write it here since difficultyJson exists
-        fs.writeFile('difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
-          console.log('Finished writing');
-        });
-      })
-      .catch((err) => {
-        reject();
-        console.log(err);
-      })
+    promises.push(scrapeIndividualPage(link));
   });
 
+  return Promise.all(promises)
+    .then((difficulty) => {
+      var tracker;
+      try {
+      var filteredDifficulty = removeInvalidEntries(difficulty);
+      filteredDifficulty.forEach((difficultyArray) => {
+        tracker = difficultyArray;
+        if(difficultyArray == undefined) {
+          return;
+        }
+        if(difficultyArray.length != 10) {
+          return;
+        }
+        for(var j = 0; j < 5; j++) {
+          if(difficultyArray[j] == 'N/A') {
+            continue;
+          }
+          difficultyJson['Singles'][difficultyArray[j]].push(difficultyArray[9]);
+        }
+        for(var j = 5; j < 9; j++) {
+          if(difficultyArray[j] == 'N/A') {
+            continue;
+          }
+          difficultyJson['Doubles'][difficultyArray[j]].push(difficultyArray[9]);
+        }
+      });
+    }
+    catch(error) {
+      console.log(tracker);
+      console.log(error);
+    }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function getNextPage($) {
   var candidates = $('#mw-pages').find('a');
+  var nextPageLink;
   var links = [];
   candidates.each(function(i, elem) {
+    if($(this).text().includes('next page')) {
+      nextPageLink = $(this).attr('href');
+      return;
+    }
     links.push('https://remywiki.com' + $(this).attr('href'));
   });
+  links.push('https://remywiki.com' + nextPageLink);
   return links;
 }
 
