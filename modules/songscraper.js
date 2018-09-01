@@ -57,6 +57,11 @@ function getSongInfo($, songJson) {
 
 function parseDifficulty($, difficulty) {
   var difficultiesArray = [];
+  //console.log(difficulty);
+  if(difficulty.length == 0) {
+    return [];
+  }
+  try {
   difficulty.each(function(i, elem) {
     if (i != 0) {
       var rawText = $(this).text();
@@ -74,11 +79,18 @@ function parseDifficulty($, difficulty) {
       }
     }
   });
+  }
+  catch (err) {
+    console.log(err);
+    console.log('something went wrong');
+    console.log(difficulty);
+    console.log(Array.isArray(difficulty));
+  }
   return difficultiesArray;
 }
 
 function parseNoteCount($, noteCount) {
-  noteCountArray = [];
+  var noteCountArray = [];
   noteCount.each(function(i, elem) {
     if (i != 0) {
       var rawText = $(this).text();
@@ -90,15 +102,13 @@ function parseNoteCount($, noteCount) {
 }
 
 function getRawDifficulty($, index = 0) {
-  var difficulty;
+  var difficulty = [];
   $('tbody').each(function(i, elem) {
     var gameName = $(this).find('tr').last().find('td').eq(0).text();
     if (gameName.includes('DanceDance') || gameName.includes('DDR')) {
       difficulty = $(this).find('tr').last().find('td');
       index = i;
       return false;
-    } else {
-      difficulty = [];
     }
   });
   return difficulty;

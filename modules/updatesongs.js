@@ -41,17 +41,17 @@ async function scrape() {
     await scrapeAllPages(links, difficultyJson);
   }
   //console.log(JSON.stringify(difficultyJson, null, 2));
-  fs.writeFile('../difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
+  fs.writeFile('./difficultylist.json', JSON.stringify(difficultyJson, null, 2), () => {
     console.log('Finished writing');
   });
 }
 
 function initializeJson() {
   var difficultyJson = {};
-  difficultyJson = {'Singles': {}, 'Doubles': {}};
+  difficultyJson = {'singles': {}, 'doubles': {}};
   for (var i = 1; i < 20; i++) {
-    difficultyJson['Singles'][i] = [];
-    difficultyJson['Doubles'][i] = [];
+    difficultyJson['singles'][i] = [];
+    difficultyJson['doubles'][i] = [];
   }
   return difficultyJson;
 }
@@ -126,13 +126,13 @@ async function scrapeAllPages(links, difficultyJson) {
           if(difficultyArray[j] == 'N/A') {
             continue;
           }
-          difficultyJson['Singles'][difficultyArray[j]].push(difficultyArray[9]);
+          difficultyJson['singles'][difficultyArray[j]].push(difficultyArray[9]);
         }
         for(var j = 5; j < 9; j++) {
           if(difficultyArray[j] == 'N/A') {
             continue;
           }
-          difficultyJson['Doubles'][difficultyArray[j]].push(difficultyArray[9]);
+          difficultyJson['doubles'][difficultyArray[j]].push(difficultyArray[9]);
         }
       });
     }
