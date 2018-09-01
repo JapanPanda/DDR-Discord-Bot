@@ -48,10 +48,10 @@ async function scrape() {
 
 function initializeJson() {
   var difficultyJson = {};
-  difficultyJson = {'Singles': {}, 'Doubles': {}};
+  difficultyJson = {'singles': {}, 'doubles': {}};
   for (var i = 1; i < 20; i++) {
-    difficultyJson['Singles'][i] = [];
-    difficultyJson['Doubles'][i] = [];
+    difficultyJson['singles'][i] = [];
+    difficultyJson['doubles'][i] = [];
   }
   return difficultyJson;
 }
@@ -60,7 +60,7 @@ async function scrapeLinks() {
   var difficultyJson = {};
   return rp(options)
     .then(($) => {
-      links = getNextPage($);
+      links = getLinks($);
       var nextPageLink = links[0];
       console.log("Scraping Remywiki's list of DDR Songs. This might take a while...")
       return links;
@@ -126,13 +126,13 @@ async function scrapeAllPages(links, difficultyJson) {
           if(difficultyArray[j] == 'N/A') {
             continue;
           }
-          difficultyJson['Singles'][difficultyArray[j]].push(difficultyArray[9]);
+          difficultyJson['singles'][difficultyArray[j]].push(difficultyArray[9]);
         }
         for(var j = 5; j < 9; j++) {
           if(difficultyArray[j] == 'N/A') {
             continue;
           }
-          difficultyJson['Doubles'][difficultyArray[j]].push(difficultyArray[9]);
+          difficultyJson['doubles'][difficultyArray[j]].push(difficultyArray[9]);
         }
       });
     }
@@ -146,7 +146,7 @@ async function scrapeAllPages(links, difficultyJson) {
     });
 }
 
-function getNextPage($) {
+function getLinks($) {
   var candidates = $('#mw-pages').find('a');
   var nextPageLink;
   var links = [];
@@ -161,8 +161,5 @@ function getNextPage($) {
   return links;
 }
 
-function getSongLinks() {
-
-}
 
 scrape();
