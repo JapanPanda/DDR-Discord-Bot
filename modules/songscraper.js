@@ -6,7 +6,8 @@ module.exports = {
   search: function(name) { return search(name) },
   getDifficulty: function($) { var difficulty = getRawDifficulty($);
                              return parseDifficulty($, difficulty); },
-  isCutCSExclusive: function($) { return isCutCSExclusive($); }
+  isCutCSExclusive: function($) { return isCutCSExclusive($); },
+  difficultySearch: function(link, playstyle, level) { return difficultySearch(link, playstyle, level); }
 };
 
 function getSongInfo($, songJson) {
@@ -22,6 +23,17 @@ function getSongInfo($, songJson) {
     var artist = songInfo.slice(8, songInfo.indexOf('Composition/Arrangement: ') - 1);
     songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
     var charter = songInfo.slice(26, songInfo.indexOf('BPM: ') - 1);
+  }
+  else if(songInfo.includes('Composition/Lyrics: ')) {
+    var artist = songInfo.slice(8, songInfo.indexOf('Composition/Lyrics: ') - 1);
+    songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
+    var charter = songInfo.slice(23, songInfo.indexOf('BPM: ') - 1);
+  }
+  else if(songInfo.includes('Composition/Lyrics/Vocals: ')) {
+    var artist = songInfo.slice(8, songInfo.indexOf('Composition/Lyrics/Vocals: ') - 1);
+    songInfo = songInfo.slice(songInfo.indexOf(artist) + artist.length);
+    var charter = songInfo.slice(31, songInfo.indexOf('BPM: ') - 1);
+    separateArranger = true;
   }
   else {
     var artist = songInfo.slice(8, songInfo.indexOf('Composition: ') - 1);
@@ -154,6 +166,75 @@ function search(name) {
     .catch((error) => {
       console.log(error);
     });
+}
+
+function getDifficultyName(index) {
+  switch (index) {
+    case 0:
+      return 'Beginner';
+    case 1:
+      return 'Basic';
+    case 2:
+      return 'Difficult';
+    case 3:
+      return 'Expert';
+    case 4:
+      return 'Challenge';
+    case 5:
+      return 'Basic';
+    case 6:
+      return 'Difficult';
+    case 7:
+      return 'Expert';
+    case 8:
+      return 'Challenge';
+  }
+}
+
+function difficultySearch(link, playstyle, level) {
+  var songJson = {};
+  var finalJson = {};
+
+  var options = {
+    uri: link,
+    followAllRedirects: true,
+    transform: function(body) {
+      return cheerio.load(body);
+    }
+  }
+
+  return rp(options)
+    .then(($) => {
+
+      getSongInfo($, songJson);
+      getChartInfo($, songJson);
+
+      var levelIndex = 0;
+
+      if(playstyle == 'single') {
+        for(var i = 0; i < 5; i++) {
+          if((songJson['difficulty'])[i] == level) {
+            levelIndex = i;
+            break;
+          }
+        }
+      }
+      else {
+        for(var i = 5; i < 9; i++) {
+          if((songJson['difficulty'])[i] == level) {
+            levelIndex = i;
+            break;
+          }
+        }
+      }
+
+      finalJson['difficulty'] = getDifficultyName(levelIndex);
+      finalJson['songname'] = songJson['songname'];
+      finalJson['bpm'] = songJson['bpm'];
+
+      return finalJson;
+
+    })
 }
 
 // Check if song is still in DDR Arcade versions

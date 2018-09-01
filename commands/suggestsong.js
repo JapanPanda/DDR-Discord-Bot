@@ -5,7 +5,7 @@ module.exports = {
   name: 'suggestsong',
   aliases: ['suggest', 'ss'],
   description: '!suggestsong {single or double (default = singles)} {level} {number of suggestions}- Gives a song within a level',
-  execute(message, args) {
+  async execute(message, args) {
     var playstyle = 'single';
     var level;
     if (!args.includes('single') && !args.includes('double')
@@ -22,7 +22,7 @@ module.exports = {
       }
       level = args[1];
     }
-    var songChosen = generateSong(playstyle, level);
+    var _message = await generateSong(playstyle, level);
     message.channel.send(_message);
   },
 }
@@ -31,12 +31,15 @@ module.exports = {
 async function generateSong(playstyle, level) {
     var difficultyJson = JSON.parse(fs.readFileSync('./difficultylist.json', 'utf8'));
     var indexChosen = Math.floor(Math.random() * (difficultyJson[playstyle])[level].length);
-    indexChosen = 34;
     var songLink = ((difficultyJson[playstyle])[level])[indexChosen];
-    console.log(songLink);
     var songJson = await songscraper.difficultySearch(songLink, playstyle, level);
-    //console.log(songJson);
+    console.log(songJson);
+    var difficulty = songJson['difficulty'];
+    var bpm = songJson['bpm'];
+    var songname = songJson['songname'];
+    message = `I've picked a song for you!\n` + `__**${songname}**__\n` +
+    `**Level:** ${level}\n` +
+    `**Difficulty:** ${difficulty}\n` +
+    `**BPM:** ${bpm}`;
+    return message;
 }
-
-
-generateSong('singles', 13);
