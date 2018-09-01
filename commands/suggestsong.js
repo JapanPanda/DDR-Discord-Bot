@@ -6,7 +6,7 @@ module.exports = {
   aliases: ['suggest', 'ss'],
   description: '!suggestsong {single or double (default = singles)} {level} {number of suggestions}- Gives a song within a level',
   async execute(message, args) {
-    var playstyle = 'single';
+    var playstyle = 'singles';
     var level;
     if (!args.includes('single') && !args.includes('double')
         && !args.includes('singles') && !args.includes('doubles')){
@@ -37,7 +37,9 @@ async function generateSong(playstyle, level) {
     var difficulty = songJson['difficulty'];
     var bpm = songJson['bpm'];
     var songname = songJson['songname'];
+    playstyle = playstyle[0].toUpperCase() + playstyle.slice(1);
     message = `I've picked a song for you!\n` + `__**${songname}**__\n` +
+    `**Playstyle:** ${playstyle}\n` +
     `**Level:** ${level}\n` +
     `**Difficulty:** ${difficulty}\n` +
     `**BPM:** ${bpm}`;

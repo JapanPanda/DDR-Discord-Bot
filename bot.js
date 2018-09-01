@@ -19,7 +19,8 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-  if(message.content.includes(':dab:')) {
+  if(message.content.includes(' dab ') || message.content.includes(':dab:')
+    || message.content.includes(' dabbing ')) {
     const dabEmoji = client.emojis.get('469280794909868052');
     message.react(dabEmoji.id)
   }
