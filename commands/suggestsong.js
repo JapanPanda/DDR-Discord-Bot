@@ -7,71 +7,78 @@ module.exports = {
   description: '!suggestsong {single or double (default = singles)} {level / range} {number of suggestions (4 max & default = 1)} - Gives a song within a level',
   async execute(message, args) {
     message.channel.startTyping();
-    if(args.length > 3) {
-      var message = 'Too many arguments! Accepted arguments are {playstyle (default = singles)} {level / range} {number (4 max & default = 1)}';
+    try {
+      if(args.length > 3) {
+        var message = 'Too many arguments! Accepted arguments are {playstyle (default = singles)} {level / range} {number (4 max & default = 1)}';
+        message.channel.send(_message);
+        message.channel.stopTyping();
+        return;
+      }
+
+      var playstyle = 'singles';
+      var level;
+      var levels;
+      var times = 1;
+      if (!args.includes('single') && !args.includes('double')
+          && !args.includes('singles') && !args.includes('doubles')){
+        level = args[0];
+        if(args.length == 2) {
+          times = parseInt(args[1]);
+        }
+      }
+      else {
+        playstyle = args[0];
+        if (playstyle == 'single') {
+          playstyle == 'singles';
+        }
+        else if (playstyle == 'double') {
+          playstyle == 'doubles';
+        }
+        level = args[1];
+        if(args.length == 3) {
+          times = parseInt(args[2]);
+        }
+      }
+
+      var rawLevels = level.split('-');
+      console.log(rawLevels);
+      var parsedLevels = [];
+
+
+      var error = false;
+      if (isNaN(times)) {
+        _message = `Invalid times chosen, ${times} is not a number!`;
+        error = true;
+      }
+      if (times < 0 || times > 4) {
+        _message = `Invalid amount of times chosen. The range is 1-4 inclusive!`;
+        error = true;
+      }
+
+      rawLevels.forEach(function(_level) {
+        var parsedLevel = parseInt(_level);
+        parsedLevels.push(parsedLevel);
+        if (parsedLevel > 19) {
+          var _message = `Ok Fefemz, you needa calm down there.\nTheres no level ${level} difficulty yet!`;
+          error = true;
+        }
+        else if(parsedLevel < 1) {
+          var _message = `Ok now, you possibly can't be that bad.\nTheres no level ${level} difficulty yet!`;
+          error = true;
+        }
+      });
+
+      if(!error) {
+        var _message = await generateSong(playstyle, parsedLevels, times);
+      }
       message.channel.send(_message);
       message.channel.stopTyping();
-      return;
     }
-
-    var playstyle = 'singles';
-    var level;
-    var levels;
-    var times = 1;
-    if (!args.includes('single') && !args.includes('double')
-        && !args.includes('singles') && !args.includes('doubles')){
-      level = args[0];
-      if(args.length == 2) {
-        times = parseInt(args[1]);
-      }
+    catch (error) {
+      var errmessage = 'Something went wrong! Please check your parameters';
+      message.channel.send(errmessage);
+      message.channel.stopTyping();
     }
-    else {
-      playstyle = args[0];
-      if (playstyle == 'single') {
-        playstyle == 'singles';
-      }
-      else if (playstyle == 'double') {
-        playstyle == 'doubles';
-      }
-      level = args[1];
-      if(args.length == 3) {
-        times = parseInt(args[2]);
-      }
-    }
-
-    var rawLevels = level.split('-');
-    console.log(rawLevels);
-    var parsedLevels = [];
-
-
-    var error = false;
-    if (isNaN(times)) {
-      _message = `Invalid times chosen, ${times} is not a number!`;
-      error = true;
-    }
-    if (times < 0 || times > 4) {
-      _message = `Invalid amount of times chosen. The range is 1-4 inclusive!`;
-      error = true;
-    }
-
-    rawLevels.forEach(function(_level) {
-      var parsedLevel = parseInt(_level);
-      parsedLevels.push(parsedLevel);
-      if (parsedLevel > 19) {
-        var _message = `Ok Fefemz, you needa calm down there.\nTheres no level ${level} difficulty yet!`;
-        error = true;
-      }
-      else if(parsedLevel < 1) {
-        var _message = `Ok now, you possibly can't be that bad.\nTheres no level ${level} difficulty yet!`;
-        error = true;
-      }
-    });
-
-    if(!error) {
-      var _message = await generateSong(playstyle, parsedLevels, times);
-    }
-    message.channel.send(_message);
-    message.channel.stopTyping();
   },
 }
 

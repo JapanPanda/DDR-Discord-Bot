@@ -7,10 +7,17 @@ module.exports = {
   async execute(message, args) {
     message.channel.startTyping();
     var searchQuery = getSearchQuery(args);
-    await getMessage(searchQuery).then(function(_message) {
+    try {
+      await getMessage(searchQuery).then(function(_message) {
+        message.channel.send(_message);
+        message.channel.stopTyping();
+      });
+    }
+    catch(err) {
+      var _message = 'Invalid song! Could not find ' + searchQuery;
       message.channel.send(_message);
       message.channel.stopTyping();
-    });
+    }
   },
 }
 
