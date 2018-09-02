@@ -11,6 +11,7 @@ module.exports = {
 };
 
 function getSongInfo($, songJson) {
+  var songromaji = $('#firstHeading').eq(0).text();
   var songName = $('.mw-headline').eq(0).text();
   var songInfo;
   $('.mw-parser-output').find('p').each(function(i, elem) {
@@ -48,6 +49,7 @@ function getSongInfo($, songJson) {
   if(separateArranger) {
     charter = charter.replace('Arrangement: ', '**Arrangement:** ')
   }
+  songJson['songromaji'] = songromaji;
   songJson['songname'] = songName;
   songJson['artist'] = artist;
   songJson['charter'] = charter;
@@ -239,9 +241,10 @@ function difficultySearch(link, playstyle, level) {
       }
 
       finalJson['difficulty'] = getDifficultyName(levelIndex);
+      finalJson['notecount'] = (songJson['notecount'])[levelIndex];
       finalJson['songname'] = songJson['songname'];
       finalJson['bpm'] = songJson['bpm'];
-
+      finalJson['songromaji'] = songJson['songromaji'];
       return finalJson;
 
     })

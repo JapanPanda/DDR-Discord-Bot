@@ -33,7 +33,8 @@ function getMessage(searchQuery) {
       return _message;
     }
     else {
-      let name = songJson['songname'];
+      let songromaji = songJson['songromaji'];
+      let songname = songJson['songname'];
       let artist = songJson['artist'];
       let charter = songJson['charter'];
       let bpm = songJson['bpm'];
@@ -56,7 +57,19 @@ function getMessage(searchQuery) {
       let noteddp = songJson['notecount'][6];
       let noteedp = songJson['notecount'][7];
       let notecdp = songJson['notecount'][8];
-      var _message = `__**${name}**__\n` +
+      console.log(String.fromCharCode(8220) + String.fromCharCode(8221));
+      songname = songname.replace(String.fromCharCode(8220), '"');
+      songname = songname.replace(String.fromCharCode(8221), '"');
+      console.log(songname);
+      var songString;
+      if (songname != songromaji) {
+        songString = `${songname} (${songromaji})`;
+      }
+      else {
+        songString = songname;
+      }
+
+      var _message = `__**${songString}**__\n` +
       `**Artist:** ${artist}\n` +
       `**Charter:** ${charter}\n` +
       `**BPM:** ${bpm}\n` +

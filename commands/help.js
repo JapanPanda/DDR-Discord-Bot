@@ -6,7 +6,7 @@ module.exports = {
     '!help - Show available commands\n' +
     '!who - Brief introduction about who I am\n' +
     '!songinfo {song name} - Lists Song information and difficulty breakdown (romaji accepted)\n' +
-    '!suggestsong {singles / doubles} {level} - Suggests a song to play that fits the parameters';
+    '!suggestsong {playstyle (default = singles)} {level / range} {times (4 max & default = 1)} - Suggests a song that fits the parameters';
     message.channel.send(_message);
   },
 }
