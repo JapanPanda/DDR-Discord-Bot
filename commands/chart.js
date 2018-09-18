@@ -140,5 +140,3 @@ function parseSongInfo(args, songInfo) {
   }
   return 0;
 }
-
-getChartVideo(['esp', 'DSFSDCIDSUIHCFUIWHS']);
