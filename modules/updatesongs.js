@@ -161,8 +161,4 @@ function getNextPage($) {
   return links;
 }
 
-function getSongLinks() {
-
-}
-
 scrape();
