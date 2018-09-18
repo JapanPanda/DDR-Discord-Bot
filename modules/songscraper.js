@@ -1,6 +1,5 @@
-
-var rp = require('request-promise')
-var cheerio = require('cheerio')
+var rp = require('request-promise');
+var cheerio = require('cheerio');
 
 module.exports = {
   search: function(name) { return search(name) },
