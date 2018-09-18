@@ -6,8 +6,9 @@ Discord bot for Dance Dance Revolution channels!
 
 ## Features
 - [X] Song Info - Gets song info (artist, composer, bpm, etc) along with the difficulty breakdowns and the corresponding note counts!
-- [ ] Youtube Chart Search - Provides a youtube link to a chart that is on youtube.
+- [X] Youtube Chart Search - Provides a youtube link to a chart that is on youtube.
 - [X] Song recommendation - Gives 3 songs that have charts in a certain level specified.
+- [ ] Rival Code - Gives a user's rival code.
 
 Have any suggestions? Create an issue on Github.
 
