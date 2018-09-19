@@ -4,7 +4,7 @@ var rivalCodeList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filenam
 
 module.exports = {
   name: 'rival',
-  description: '!rival {add|del|get} {handle name (add|get args. only)} {rival code (add arg. only)} - Share your rival code to members of the server.',
+  description: '**!rival {add|del|get} {handle name (add|get args. only)} {rival code (add arg. only)}** - Share your rival code to members of the server.',
   execute(message, args) {
     if (!validateArgLength(message, args, 1))
       return;
@@ -121,7 +121,7 @@ function validateRivalCode(message, args, j) {
 
 function validateArgLength(message, args, j) {
   if (args.length < j) {
-    message.channel.send('Too few arguments. You need \nDescription: ' + module.exports.description);
+    message.channel.send('Too few arguments. \nDescription: ' + module.exports.description);
     return false;
   }
   return true;

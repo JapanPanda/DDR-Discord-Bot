@@ -5,7 +5,7 @@ var commandCollection = new Discord.Collection();
 
 module.exports = {
   name: 'help',
-  description: '!help {command (optional)}- Shows a list of available commands or help with a certain command!',
+  description: '**!help {command (optional)}** - Shows a list of available commands or help with a certain command!',
   aliases: 'h',
   execute(message, args) {
     var _message = '';

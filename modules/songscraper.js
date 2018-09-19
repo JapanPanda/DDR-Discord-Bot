@@ -5,9 +5,80 @@ module.exports = {
   search: function(name) { return search(name) },
   getDifficulty: function($) { var difficulty = getRawDifficulty($);
                              return parseDifficulty($, difficulty); },
+  getLevel: async function(name, playstyle, difficulty) { return await getLevels(name, playstyle, difficulty); },
   isCutCSExclusive: function($) { return isCutCSExclusive($); },
   difficultySearch: function(link, playstyle, level) { return difficultySearch(link, playstyle, level); }
 };
+
+function getLevels(name, playstyle, difficulty) {
+  var link = getSearchQuery(name);
+
+  var options = {
+    uri: link,
+    followAllRedirects: true,
+    transform: function(body) {
+      return cheerio.load(body);
+    }
+  }
+
+  return rp(options)
+    .then(($) => {
+
+      if ($('#firstHeading').text() == 'Search results') {
+        console.log('User tried to search ' + name + ' which yielded no results');
+        return 0;
+      }
+
+
+      var info = {};
+      info['prettyName'] = $('.mw-headline').eq(0).text();
+      var difficulties = module.exports.getDifficulty($);
+      if (playstyle == 'singles') {
+        switch (difficulty) {
+          case 'beginner':
+            info['difficulty'] = difficulties[0];
+            break;
+          case 'basic':
+            info['difficulty'] =  difficulties[1];
+            break;
+          case 'difficult':
+            info['difficulty'] =  difficulties[2];
+            break;
+          case 'expert':
+            info['difficulty'] =  difficulties[3];
+            break;
+          case 'challenge':
+            info['difficulty'] =  difficulties[4];
+            break;
+        }
+      }
+      else if (playstyle == 'doubles') {
+        switch (difficulty) {
+          case 'basic':
+            info['difficulty'] =  difficulties[5];
+            break;
+          case 'difficult':
+            info['difficulty'] =  difficulties[6];
+            break;
+          case 'expert':
+            info['difficulty'] =  difficulties[7];
+            break;
+          case 'challenge':
+            info['difficulty'] =  difficulties[8];
+            break;
+        }
+      }
+      return info;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function getSearchQuery(name) {
+  var songName = encodeURI(name);
+  return 'https://remywiki.com/index.php?search=' + songName + '&title=Special%3ASearch&go=Go';
+}
 
 function getSongInfo($, songJson) {
   var songromaji = $('#firstHeading').eq(0).text();

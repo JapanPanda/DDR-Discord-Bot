@@ -2,7 +2,7 @@ const songscraper = require('../modules/songscraper.js');
 
 module.exports = {
   name: 'songinfo',
-  description: '!songinfo {song name} - Lists Song information and difficulty breakdown (romaji accepted)',
+  description: '**!songinfo {song name}** - Lists Song information and difficulty breakdown (romaji accepted)',
   aliases: 'si',
   async execute(message, args) {
     message.channel.startTyping();

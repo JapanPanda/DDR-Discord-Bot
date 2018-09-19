@@ -4,7 +4,7 @@ const songscraper = require('../modules/songscraper.js')
 module.exports = {
   name: 'suggestsong',
   aliases: ['suggest', 'ss'],
-  description: '!suggestsong {single or double (default = singles)} {level / range} {number of suggestions (4 max & default = 1)} - Gives a song within a level',
+  description: '**!suggestsong {single or double (default = singles)} {level / range} {number of suggestions (4 max & default = 1)}** - Gives a song within a level',
   async execute(message, args) {
     message.channel.startTyping();
     try {

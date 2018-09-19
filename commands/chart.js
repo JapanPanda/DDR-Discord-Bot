@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 
 module.exports = {
   name: 'chart',
-  description: '!chart {playstyle & difficulty example: esp} {song name} - Grabs a youtube video of the chart from Yuisin (romaji accepted)',
+  description: '**!chart {playstyle & difficulty example: esp} {song name}** - Grabs a youtube video of the chart from Yuisin (romaji accepted)',
   aliases: 'c',
   async execute(message, args) {
     try {
@@ -30,7 +30,7 @@ async function getChartVideo(args) {
   else if(searchQuery == 2) {
     return 'Could not find the abbreviation ' + args[0] + '\nPossible combinations are:\n' +
     '**BE**: Beginner, **B**: Basic, **D**: Difficult, **E**: Expert, **C**: Challenge\nCombined with:\n**SP**: Singles, **DP**: Doubles\n' +
-    'An example of an abbreivation would be **BSP** (Basic Single Play)';
+    'An example of an abbreviation would be **BSP** (Basic Single Play)';
   }
 
   options.uri = searchQuery;
