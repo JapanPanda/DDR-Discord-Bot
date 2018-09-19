@@ -84,8 +84,15 @@ function getRivalCode(message, args) {
     return;
 
   var temp = rivalCodeList.filter(entry => entry.handle_name == handleName);
-  if (temp.length > 0)
-    message.channel.send('Rival code of ' + temp[0].handle_name + ': ' + temp[0].rival_code);
+  if (temp.length > 0) {
+    var msg = 'Found ' + temp.length + ' results of "' + handleName + '"\n';
+    for (var i in temp) {
+      if (i > 0)
+        msg += '\n';
+      msg += '\t' + temp[i].rival_code;
+    }
+    message.channel.send(msg);
+  }
   else
     message.channel.send('Handle name ' + handleName + ' not found.');
 }
@@ -94,9 +101,9 @@ function validateHandleName(message, args, j) {
   var handleName = '';
   for (var i = 1; i < j; ++i) {
     if (i > 1)
-      handleName = handleName.concat(' ');
+      handleName += ' ';
 
-    handleName = handleName.concat(args[i]).toUpperCase();
+    handleName += args[i].toUpperCase();
   }
   if (handleName.length > 8) {
     message.channel.send('Invalid handle name: "' + handleName + '"\'s character length > 8.');
@@ -121,7 +128,11 @@ function validateRivalCode(message, args, j) {
 
 function validateArgLength(message, args, j) {
   if (args.length < j) {
+<<<<<<< HEAD
     message.channel.send('Too few arguments. \nDescription: ' + module.exports.description);
+=======
+    message.channel.send('Too few arguments.\nDescription: ' + module.exports.description);
+>>>>>>> ca7a42938da56d9e85ec8051137b00a3a0eae627
     return false;
   }
   return true;
