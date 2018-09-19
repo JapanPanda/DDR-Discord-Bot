@@ -10,6 +10,7 @@ module.exports = {
   + ' To overwrite a score, just add the new score and it will be overwritten automatically.'
   + ' Use !scoreget for getting scores!',
   async execute(message, args) {
+    scoreList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
     if (args.length == 0) {
       message.channel.send('Incorrect usage! Refer to:\n' + module.exports.description);
       return;
@@ -97,9 +98,10 @@ async function addScore(message, args, info, songInfo) {
       message.channel.send('Something went wrong while trying to submit your score!');
     }
     else {
+      var prettyScore = songInfo.score.slice(0,3) + ',' + songInfo.score.slice(3);
       var difficulty = songInfo.difficulty.charAt(0).toUpperCase() + songInfo.difficulty.slice(1);
       var playstyle = songInfo.playstyle.charAt(0).toUpperCase() + songInfo.playstyle.slice(1);
-      message.channel.send(`Successfully recorded the score of ${songInfo.score} ` +
+      message.channel.send(`Successfully recorded the score of ${prettyScore} ` +
         `for ${info.prettyName} ${playstyle} ${difficulty} under the handle ` +
         `${scoreList[message.author.id]['handle']}!`);
     }
