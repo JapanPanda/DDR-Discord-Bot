@@ -94,9 +94,9 @@ function validateHandleName(message, args, j) {
   var handleName = '';
   for (var i = 1; i < j; ++i) {
     if (i > 1)
-      handleName = handleName.concat(' ');
+      handleName += ' ';
 
-    handleName = handleName.concat(args[i]).toUpperCase();
+    handleName += args[i].toUpperCase();
   }
   if (handleName.length > 8) {
     message.channel.send('Invalid handle name: "' + handleName + '"\'s character length > 8.');
