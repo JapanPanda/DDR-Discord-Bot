@@ -61,35 +61,8 @@ function getHandle(args) {
   return handle;
 }
 
-function getOwnScores(message, playstyle, level) {
+function printScores(message, handle, selectedEntry) {
   var prettyPlaystyle = playstyle.charAt(0).toUpperCase() + playstyle.slice(1);
-  if(!scoreList.hasOwnProperty(message.author.id)) {
-    message.channel.send('You\'re not registered in the score manager! Use !scoreregister {handle} first and add some scores!');
-    return;
-  }
-  if(scoreList[message.author.id][playstyle][level] == null || scoreList[message.author.id][playstyle][level].length == 0) {
-    message.channel.send('You have no registered scores under the level ' + level + ' in ' + prettyPlaystyle);
-    return;
-  }
-  var userScoreList = scoreList[message.author.id][playstyle][level]
-  var _message = `Your Level ${level} scores:\n` ;
-  for (var score in userScoreList) {
-    var prettyScore = userScoreList[score]['score'].slice(0,3) + ',' + userScoreList[score]['score'].slice(3);
-    _message += `**${userScoreList[score]['prettyName']} ${prettyPlaystyle} ${userScoreList[score]['difficulty']}**: `;
-    _message += `${prettyScore}\n`;
-  }
-  message.channel.send(_message);
-}
-
-function getOtherScores(message, handle, playstyle, level) {
-  var prettyPlaystyle = playstyle.charAt(0).toUpperCase() + playstyle.slice(1);
-  var selectedEntry;
-  for (var entry in scoreList) {
-    if (scoreList[entry]['handle'] == handle) {
-      selectedEntry = scoreList[entry];
-      break;
-    }
-  }
   if (selectedEntry == null) {
     message.channel.send('The handle ' + handle + ' is not registered in the score manager!');
     return;
@@ -142,12 +115,21 @@ function listScores(message, args) {
     mesage.channel.send('Invalid amount of arguments!\nValid examples:\n!scoreget list 19 singles\n!scoreget list [ Hawawa ] 19 singles');
     return;
   }
+
+  var selectedEntry;
   if (handle == '') {
-    getOwnScores(message, playstyle, level);
+    selectedEntry = scoreList[message.author.id];
   }
   else {
-    getOtherScores(message, handle, playstyle, level);
+    for (var entry in scoreList) {
+      if (scoreList[entry]['handle'] == handle) {
+        selectedEntry = scoreList[entry];
+        break;
+      }
+    }
   }
+
+  printScores(message, handle, selectedEntry);
 }
 
 async function getScore(message, args) {
@@ -188,6 +170,12 @@ async function getScore(message, args) {
       }
     }
   }
+
+  if(selectedEntry == null) {
+    message.channel.send('Could not find the handle ' + handle + ' in the score database!');
+    return;
+  }
+
   if (!selectedEntry[songInfo.playstyle][info.difficulty].hasOwnProperty(songInfo.songName.toUpperCase())) {
     message.channel.send(`${selectedEntry['handle']} does not have a registered score for ` +
                          `**${info.prettyName} | ${playstyle} ${difficulty}!**`);
