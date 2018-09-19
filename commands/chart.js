@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 
 module.exports = {
   name: 'chart',
-  description: '!chart {playstyle & difficulty example: esp} {song name} - Grabs a youtube video of the chart from Yuisin (romaji accepted)\n',
+  description: '!chart {playstyle & difficulty example: esp} {song name} - Grabs a youtube video of the chart from Yuisin (romaji accepted)',
   aliases: 'c',
   async execute(message, args) {
     try {

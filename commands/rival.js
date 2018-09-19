@@ -1,81 +1,93 @@
-const filename = "../rival_codes.json"
+const filename = "./rival_codes.json"
 const fs = require("fs");
 var rivalCodeList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, "utf8")) : [];
 
 module.exports = {
   name: "rival",
   description: "!rival {add|del|get} {handle name (add|get args. only)} {rival code (add arg. only)} - Share your rival code to members of the server.",
-  async execute(message, args) {
+  execute(message, args) {
     if (!validateArgLength(args, 1))
       return;
 
     var firstArg = args[0].toLowerCase().valueOf();
     if (firstArg == "add") {
-      if (!validateArgLength(args, 3))
-        return;
-
-      var handleName = validateHandleName(message, args, args.length - 1);
-      var rivalCode = validateRivalCode(message, args, args.length - 1);
-      if (!handleName || !rivalCode)
-        return;
-
-      var temp = rivalCodeList.filter(entry => entry.id == message.author.id);
-      if (temp.length > 0) {
-        temp[0].handle_name = handleName;
-        temp[0].rival_code = rivalCode;
-      }
-      else {
-        rivalCodeList.push({
-          id: message.author.id,
-          handle_name: handleName,
-          rival_code: rivalCode
-        });
-      }
-      fs.writeFile(filename, JSON.stringify(rivalCodeList, null, 2), (err) => {
-        if (err)
-          throw err;
-        else {
-          message.channel.send("Successfully added rival code: " + rivalCode + " (" + handleName + ")");
-          console.log("finished writing " + filename);
-        }
-      });
+      addRivalCode(message, args);
     }
     else if (firstArg == "del") {
-      var temp = rivalCodeList.map((entry) => entry.id);
-      if (temp.filter(id => id == message.author.id).length > 0) {
-        rivalCodeList.splice(temp.indexOf(message.author.id), 1);
-        fs.writeFile(filename, JSON.stringify(rivalCodeList, null, 2), (err) => {
-          if (err)
-            throw err;
-          else {
-            message.channel.send("Successfully deleted your rival code.");
-            console.log("finished writing " + filename);
-          }
-        });
-      }
-      else {
-        message.channel.send("Your rival code hasn't been stored.");
-      }
+      delRivalCode(message, args);
     }
     else if (firstArg == "get") {
-      if (!validateArgLength(args, 2))
-        return;
-
-      var handleName = validateHandleName(message, args, args.length);
-      if (!handleName)
-        return;
-
-      var temp = rivalCodeList.filter(entry => entry.handle_name == handleName);
-      if (temp.length > 0)
-        message.channel.send("Rival code of " + temp[0].handle_name + ": " + temp[0].rival_code);
-      else
-        message.channel.send("Handle name " + handleName + " not found.");
+      getRivalCode(message, args);
     }
     else {
       message.channel.send("Unknown argument: " + args[0] + "\nDescription: " + this.description);
       return;
     }
   }
+}
+
+function addRivalCode(message, args) {
+  if (!validateArgLength(args, 3))
+    return;
+
+  var handleName = validateHandleName(message, args, args.length - 1);
+  var rivalCode = validateRivalCode(message, args, args.length - 1);
+  if (!handleName || !rivalCode)
+    return;
+
+  var temp = rivalCodeList.filter(entry => entry.id == message.author.id);
+  if (temp.length > 0) {
+    temp[0].handle_name = handleName;
+    temp[0].rival_code = rivalCode;
+  }
+  else {
+    rivalCodeList.push({
+      id: message.author.id,
+      handle_name: handleName,
+      rival_code: rivalCode
+    });
+  }
+  fs.writeFile(filename, JSON.stringify(rivalCodeList, null, 2), (err) => {
+    if (err)
+      throw err;
+    else {
+      message.channel.send("Successfully added rival code: " + rivalCode + " (" + handleName + ")");
+      console.log("finished writing " + filename);
+    }
+  });
+}
+
+function delRivalCode(message, args) {
+  var temp = rivalCodeList.map((entry) => entry.id);
+  if (temp.filter(id => id == message.author.id).length > 0) {
+    rivalCodeList.splice(temp.indexOf(message.author.id), 1);
+    fs.writeFile(filename, JSON.stringify(rivalCodeList, null, 2), (err) => {
+      if (err)
+        throw err;
+      else {
+        message.channel.send("Successfully deleted your rival code.");
+        console.log("finished writing " + filename);
+      }
+    });
+  }
+  else {
+    message.channel.send("Your rival code hasn't been stored.");
+  }
+}
+
+function getRivalCode(message, args) {
+  if (!validateArgLength(args, 2))
+    return;
+
+  var handleName = validateHandleName(message, args, args.length);
+  if (!handleName)
+    return;
+
+  var temp = rivalCodeList.filter(entry => entry.handle_name == handleName);
+  if (temp.length > 0)
+    message.channel.send("Rival code of " + temp[0].handle_name + ": " + temp[0].rival_code);
+  else
+    message.channel.send("Handle name " + handleName + " not found.");
 }
 
 function validateHandleName(message, args, j) {
