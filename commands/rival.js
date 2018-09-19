@@ -128,11 +128,7 @@ function validateRivalCode(message, args, j) {
 
 function validateArgLength(message, args, j) {
   if (args.length < j) {
-<<<<<<< HEAD
-    message.channel.send('Too few arguments. \nDescription: ' + module.exports.description);
-=======
     message.channel.send('Too few arguments.\nDescription: ' + module.exports.description);
->>>>>>> ca7a42938da56d9e85ec8051137b00a3a0eae627
     return false;
   }
   return true;
