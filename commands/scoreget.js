@@ -152,6 +152,7 @@ function listScores(message, args) {
 
 async function getScore(message, args) {
   //!scoreget {[ handle ] (optional, default = you)} {song name (romaji only)} {difficulty/playstyle (esp, edp, etc)}
+  scoreList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
   var handle = '';
   if (args[0] == '[') {
     handle = getHandle(args);
@@ -187,7 +188,6 @@ async function getScore(message, args) {
       }
     }
   }
-
   if (!selectedEntry[songInfo.playstyle][info.difficulty].hasOwnProperty(songInfo.songName.toUpperCase())) {
     message.channel.send(`${selectedEntry['handle']} does not have a registered score for ` +
                          `**${info.prettyName} | ${playstyle} ${difficulty}!**`);
