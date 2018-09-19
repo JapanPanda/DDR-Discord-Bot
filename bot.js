@@ -35,7 +35,7 @@ client.on('message', message => {
 
   var args = message.content.substring(1).split(/ +/);
   var commandName = args.shift().toLowerCase();
-  var command = client.commands.get(commandName)
+  var command = client.commands.get(commandName);
 
   if(!command) {
     command = client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -51,7 +51,7 @@ client.on('message', message => {
   }
   catch (err) {
     console.error(`Error: User tried !${commandName}\n` + err);
-    message.channel.send(`Something went horribly wrong when you said !${commandName} :()\n` +
+    message.channel.send(`Something went horribly wrong when you said !${commandName} :(\n` +
     `I'll be notifying my owner about this!`);
   }
 
