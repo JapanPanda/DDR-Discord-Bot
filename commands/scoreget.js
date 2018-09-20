@@ -7,8 +7,8 @@ var scoreList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, '
 
 module.exports = {
   name: 'scoreget',
-  description: '**!scoreget {[ handle ] (optional, default = you)} {song name (romaji only)} {difficulty/playstyle (esp, edp, etc)}**' +
-  ' - You may also use !scoreget list {[ handle ] (optional, default = you)} {playstyle} {level ex: 19} to get scores for a level!',
+  description: '**!scoreget {handle_space (use _ instead of spaces) (optional, default = you)} {song name (romaji only)} {difficulty/playstyle (esp, edp, etc)}**' +
+  ' - You may also use !scoreget list {handle_space (use _ instead of spaces) (optional, default = you)} {playstyle} {level ex: 19} to get scores for a level!',
   async execute(message, args) {
     if (args.length == 0) {
       message.channel.send('Incorrect usage! Refer to:\n' + module.exports.description);
@@ -40,28 +40,22 @@ function getPlaystyle(args) {
 
 function getHandle(args) {
   var handle = '';
-  var start = 0;
-  var end = 0;
-  for (var i = 0; i < args.length; i++) {
-    if (args[i] == '[') {
-      start = i + 1;
-    }
-    if (args[i] == ']') {
-      end = i;
-      break;
-    }
-  }
-  for (var i = start; i < end; i++) {
-    handle += args[i];
-    if (i != end - 1) {
+  var handleParts = args[0].split('_');
+  handleParts[handleParts.length - 1] = handleParts[handleParts.length - 1].split(' ')[0];
+  console.log(handleParts);
+  for (var i = 0; i < handleParts.length; i++) {
+    handle += handleParts[i];
+    if (i != handleParts.length - 1) {
       handle += ' ';
     }
   }
   handle = handle.toUpperCase();
+  console.log(handle);
   return handle;
 }
 
 function printScores(message, handle, selectedEntry, playstyle, level) {
+  console.log(handle);
   var prettyPlaystyle = playstyle.charAt(0).toUpperCase() + playstyle.slice(1);
   if (selectedEntry == null) {
     message.channel.send('The handle ' + handle + ' is not registered in the score manager!');
@@ -104,20 +98,16 @@ function listScores(message, args) {
 
   var counter = 0;
   var handle = '';
-  if (args[1] == '[') {
-    handle = getHandle(args);
-  }
-  else if (args.length == 4) {
-    message.channel.send('Invalid number of arguments!'+
-    '\nTo list another person\'s score, use !scoreget list {[ handle ]} {playstyle} {level}.'+
-    '\nTo list your owns, just use !scoreget list {playstyle} {level}.');
-    return;
+  console.log(args.length);
+
+  if (args.length == 4) {
+    handle = getHandle(args.slice(1));
   }
   else if (args.length == 3) {
     handle = '';
   }
   else {
-    message.channel.send('Invalid amount of arguments!\nValid examples:\n!scoreget list 19 singles\n!scoreget list [ Hawawa ] 19 singles');
+    message.channel.send('Invalid amount of arguments!\nValid examples:\n!scoreget list 19 singles\n!scoreget list Hawawa 19 singles');
     return;
   }
 
@@ -141,11 +131,9 @@ async function getScore(message, args) {
   //!scoreget {[ handle ] (optional, default = you)} {song name (romaji only)} {difficulty/playstyle (esp, edp, etc)}
   scoreList = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename, 'utf8')) : {};
   var handle = '';
-  if (args[0] == '[') {
+  if (args.length == 3) {
     handle = getHandle(args);
-    var length = handle.split(' ').length;
-    args = args.slice(length + 2);
-    console.log(args);
+    args = args.slice(1);
   }
   console.log(handle);
 
