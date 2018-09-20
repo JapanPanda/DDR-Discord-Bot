@@ -61,7 +61,7 @@ function getHandle(args) {
   return handle;
 }
 
-function printScores(message, handle, selectedEntry) {
+function printScores(message, handle, selectedEntry, playstyle, level) {
   var prettyPlaystyle = playstyle.charAt(0).toUpperCase() + playstyle.slice(1);
   if (selectedEntry == null) {
     message.channel.send('The handle ' + handle + ' is not registered in the score manager!');
@@ -112,7 +112,7 @@ function listScores(message, args) {
     handle = '';
   }
   else {
-    mesage.channel.send('Invalid amount of arguments!\nValid examples:\n!scoreget list 19 singles\n!scoreget list [ Hawawa ] 19 singles');
+    message.channel.send('Invalid amount of arguments!\nValid examples:\n!scoreget list 19 singles\n!scoreget list [ Hawawa ] 19 singles');
     return;
   }
 
@@ -129,7 +129,7 @@ function listScores(message, args) {
     }
   }
 
-  printScores(message, handle, selectedEntry);
+  printScores(message, handle, selectedEntry, playstyle, level);
 }
 
 async function getScore(message, args) {
