@@ -10,7 +10,8 @@ Discord bot for Dance Dance Revolution channels!
 - [X] Youtube Chart Search - Provides a youtube link to a chart that is on youtube.
 - [X] Song recommendation - Gives 3 songs that have charts in a certain level specified.
 - [X] Rival Code - Gives a user's rival code.
-- [ ] Score Manager - Stores manually entered scores and sorts them by difficulty and playstyle.
+- [X] Score Manager - Stores manually entered scores and sorts them by difficulty and playstyle.
+- [ ] News scraper - Scrapes EA Gate (official Dance Dance Revolution website) for news.
 
 Have any suggestions? Create an issue on Github.
 
