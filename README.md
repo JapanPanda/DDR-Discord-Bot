@@ -1,6 +1,10 @@
 # DDR-Discord-Bot
 Discord bot for Dance Dance Revolution channels!
 
+## Adding the Bot to Your Server
+https://discordapp.com/oauth2/authorize?&client_id=484845109792342017&scope=bot&permissions=8
+(Hosted on my AWS EC2 server)
+
 ## Contributors
 * JapanPanda - Developer
 * erictran0x - Developer
@@ -11,7 +15,8 @@ Discord bot for Dance Dance Revolution channels!
 - [X] Song recommendation - Gives 3 songs that have charts in a certain level specified.
 - [X] Rival Code - Gives a user's rival code.
 - [X] Score Manager - Stores manually entered scores and sorts them by difficulty and playstyle.
-- [ ] News scraper - Scrapes EA Gate (official Dance Dance Revolution website) for news.
+- [X] News scraper - Scrapes EA Gate (official Dance Dance Revolution website) for news.
+- [ ] DDR Community Rating Integration - Scrapes DDR Community for timing difficulty ratings
 
 Have any suggestions? Create an issue on Github.
 
