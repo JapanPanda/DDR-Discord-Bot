@@ -77,6 +77,7 @@ function printScores(message, handle, selectedEntry, playstyle, level) {
   if(counter == 0) {
     _message = `${handle} has no scores under the level ${level} in ${prettyPlaystyle}.`
   }
+  console.log(_message);
   message.channel.send(_message);
 }
 
@@ -178,4 +179,7 @@ async function getScore(message, args) {
   var scores = scoreCopy['score'].slice(0,3) + ',' + scoreCopy['score'].slice(3);
   message.channel.send(`${selectedEntry['handle']} has a score of **${scores}** ` +
                        `on **${info.prettyName} | ${playstyle} ${difficulty}**!`);
+
+  console.log(`${selectedEntry['handle']} has a score of **${scores}** ` +
+                      `on **${info.prettyName} | ${playstyle} ${difficulty}**!`);
 }

@@ -63,6 +63,7 @@ async function getDifficultyLevel(message, args, songInfo) {
     var _message = 'Song Page wasn\'t found on Remywiki (https://remywiki.com)\n' +
     'I tried searching, but here are the results ' + link + '\n' +
     'Are you sure your song name was correct and specific enough?'
+    console.err(_message);
     message.channel.send(_message);
     return 0;
   }
@@ -94,16 +95,18 @@ async function addScore(message, args, info, songInfo) {
 
   fs.writeFile(filename, JSON.stringify(scoreList, null, 2), (err) => {
     if (err != null) {
-      console.log(err);
+      console.error(err);
       message.channel.send('Something went wrong while trying to submit your score!');
     }
     else {
       var prettyScore = songInfo.score.slice(0,3) + ',' + songInfo.score.slice(3);
       var difficulty = songInfo.difficulty.charAt(0).toUpperCase() + songInfo.difficulty.slice(1);
       var playstyle = songInfo.playstyle.charAt(0).toUpperCase() + songInfo.playstyle.slice(1);
-      message.channel.send(`Successfully recorded the score of ${prettyScore} ` +
+      var _message = `Successfully recorded the score of ${prettyScore} ` +
         `for ${info.prettyName} ${playstyle} ${difficulty} under the handle ` +
-        `${scoreList[message.author.id]['handle']}!`);
+        `${scoreList[message.author.id]['handle']}!`;
+      console.log(_message);
+      message.channel.send(_message);
     }
   });
 }
@@ -117,13 +120,15 @@ function deleteScore(message, args, info, songInfo) {
   delete scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()];
   fs.writeFile(filename, JSON.stringify(scoreList, null, 2), (err) => {
     if (err != null) {
-      console.log(err);
+      console.error(err);
       message.channel.send('Something went wrong while trying to submit your score!');
     }
     else {
-      message.channel.send(`Successfully deleted the score of ${scoreCopy} ` +
+      var _message = `Successfully deleted the score of ${scoreCopy} ` +
         `for ${info.prettyName} ${songInfo.playstyle} ${songInfo.difficulty} under the handle ` +
-        `${scoreList[message.author.id]['handle']}!`);
+        `${scoreList[message.author.id]['handle']}!`
+      console.log(_message);
+      message.channel.send(_message);
     }
   });
 }
