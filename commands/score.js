@@ -90,7 +90,7 @@ async function addScore(message, args, info, songInfo) {
   scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()] = {};
   scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()]['score'] = songInfo.score;
   scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()]['prettyName'] = info.prettyName;
-  scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()]['difficulty'] = songInfo.difficulty;
+  scoreList[message.author.id][songInfo.playstyle][info.difficulty][songInfo.songName.toUpperCase()]['difficulty'] = songInfo.difficulty.charAt(0).toUpperCase() + songInfo.difficulty.slice(1);
 
   fs.writeFile(filename, JSON.stringify(scoreList, null, 2), (err) => {
     if (err != null) {
