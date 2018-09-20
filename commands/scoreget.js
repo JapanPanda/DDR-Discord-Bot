@@ -72,11 +72,16 @@ function printScores(message, handle, selectedEntry, playstyle, level) {
     return;
   }
   var userScoreList = selectedEntry[playstyle][level];
-  var _message = `${handle}'s Level ${level} scores:\n` ;
+  var _message = `${handle}'s Level ${level} scores:\n`;
+  var counter = 0;
   for (var score in userScoreList) {
+    counter++;
     var prettyScore = userScoreList[score]['score'].slice(0,3) + ',' + userScoreList[score]['score'].slice(3);
     _message += `**${userScoreList[score]['prettyName']} ${prettyPlaystyle} ${userScoreList[score]['difficulty']}**: `;
     _message += `${prettyScore}\n`;
+  }
+  if(counter == 0) {
+    _message = `${handle} has no scores under the level ${level} in ${prettyPlaystyle}.`
   }
   message.channel.send(_message);
 }
