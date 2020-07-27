@@ -1,11 +1,6 @@
 # DDR-Discord-Bot
 Discord bot for Dance Dance Revolution channels!
 
-## Adding the Bot to Your Server
-https://discordapp.com/oauth2/authorize?&client_id=484845109792342017&scope=bot&permissions=8
-
-(Hosted on my AWS EC2 server)
-
 ## Contributors
 * JapanPanda - Developer
 * erictran0x - Developer
